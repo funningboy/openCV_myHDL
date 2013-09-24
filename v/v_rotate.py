@@ -1,8 +1,6 @@
 
 
 from myhdl import *
-from interface import *
-
 import logging
 
 # req
@@ -59,8 +57,7 @@ def task_enc_addr (i_base, o_addr, i_h, i_w, i_w_size):
 
 def task_rotate_90(i_h, i_w, o_h, o_w):
     """ rotate 90 degree """
-    i_h
-    i_w
+
 
 
 def task_rotate_90(c_deep, i_clk, i_rst, r_en, r_addr, r_data, w_en, w_addr, w_data, o_empty, o_full):
@@ -82,7 +79,7 @@ def task_rotate_90(c_deep, i_clk, i_rst, r_en, r_addr, r_data, w_en, w_addr, w_d
     mem_addr_data  = [Signal(intbv(0, min=0, max=ADDR_WIDTH+DATA_WIDTH+1)) for i in xrange(c_deep)]
 
 
-    @always(indx):
+    @always(indx)
     def task_run_status():
         if indx == c_deep:
             o_full.next = 1
@@ -106,9 +103,9 @@ def task_rotate_90(c_deep, i_clk, i_rst, r_en, r_addr, r_data, w_en, w_addr, w_d
     def task_run_fsm():
         """ run FSM read > write priority """
         if cur_status == IDLE:
-            if r_en and !o_empty:
+            if r_en and not o_empty:
                 nxt_status.next = READ_START
-            elif w_en and !o_full:
+            elif w_en and not o_full:
                 nxt_status.next = WRITE_START
             else:
                 nxt_status.next = IDLE
