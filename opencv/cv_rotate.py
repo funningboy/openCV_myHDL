@@ -83,7 +83,7 @@ def rotate_image_180(image):
 
 
 def stamp_ladder_image(image):
-    """ stamp ladder image at 0 degree  """
+    """ stamp ladder image """
 
     img_h, img_w = image.shape[0:2]
 
@@ -102,13 +102,45 @@ def stamp_ladder_image(image):
         cv2.cv.Set2D(cv2.cv.fromarray(image), h*1/3, w, (0,0,0))
 
 
-def mask_ladder_image(image):
-    """ mask ladder image at 0 degree """
+def remain_ladder_image(image):
+    """ remain ladder image """
 
-    # for left mask
+    img_h, img_w = image.shape[0:2]
+
+    slope = float(img_h)/3*2 / (float(img_w)/6)
+
+    [cv2.cv.Get2D(cv2.cv.fromarray(image), h, w) for h in xrange(img_h/3, img_h) for w in xrange(int(img_w/6-float(h-img_h/3)/slope), int(img_w*5/6+float(h-img_h/3)/slope))]
+
+
+def mask_ladder_image(image):
+    """ mask ladder image """
+
+    img_h, img_w = image.shape[0:2]
+
+    slope = float(img_h)/3*2 / (float(img_w)/6)
+
+    # for top shape
+    for h in xrange(0, img_h/3):
+        for w in xrange(0, img_w):
+            cv2.cv.Set2D(cv2.cv.fromarray(image), h, w, (0,0,0))
+
+    # for left shape
     for h in xrange(img_h/3, img_h):
-        for w in xrange(0,
-        cv2.cv.Set2D(cv2.cv.fromarray(image), h,
+        for w in xrange(0, int(img_w/6-float(h-img_h/3)/slope)):
+            cv2.cv.Set2D(cv2.cv.fromarray(image), h, w, (0,0,0))
+
+    # for left shape
+    for h in xrange(img_h/3, img_h):
+        for w in xrange(int(img_w*5/6+float(h-img_h/3)/slope), img_w):
+            cv2.cv.Set2D(cv2.cv.fromarray(image), h, w, (0,0,0))
+
+
+def watermark_image(image, st="Hello"):
+    """ red watermark text """
+
+    img_h, img_w = image.shape[0:2]
+
+    cv2.cv.PutText(cv2.cv.fromarray(image), st, (img_h/2,img_w/2), cv2.FONT_HERSHEY_PLAIN, (0, 0, 255))
 
 
 
@@ -118,7 +150,9 @@ if __name__ == '__main__':
     cv_image = cv_rotate_image(image=image, angle=270)
     it_image = cv_clone_image(image)
     rotate_image_270(it_image)
-    reshape_image_0(it_image)
+    stamp_ladder_image(it_image)
+    mask_ladder_image(it_image)
+    #watermark_image(image)
     cv_dump_image('cv_270.jpg', cv_image)
     cv_dump_image('it_270.jpg', it_image)
     cv_show_image('org image', image)
